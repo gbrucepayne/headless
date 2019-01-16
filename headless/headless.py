@@ -2,6 +2,7 @@
 """
 Functions and classes useful for operating a headless device e.g. Raspberry Pi or Intelligent Edge Gateway
 """
+__version__ = "1.0.0"
 
 import time
 import inspect
@@ -12,7 +13,7 @@ import serial.tools.list_ports
 
 
 def is_logger(log):
-    """Returns True if an object is a Logger"""
+    """Returns True if the object is a Logger"""
     return isinstance(log, logging.Logger)
 
 
@@ -20,9 +21,9 @@ def is_log_handler(logger, handler):
     """
     Determines if a given (named) Handler is assigned to a Logger
 
-    :param logger: ``logging.Logger`` object
-    :param handler: ``logging.Handler`` object
-    :return: ``bool`` result
+    :param logger: (logging.Logger) object
+    :param handler: (logging.Handler) object
+    :return: (bool) result
 
     """
     found = False
@@ -40,11 +41,11 @@ def get_caller_name(depth=2, mod=True, cls=False, mth=False):
 
     Gets the name of the calling module/class/method with format [module][.class][.method]
 
-    :param depth: ``int`` the depth of the caller if passing through multiple methods
-    :param mod: ``bool`` include module in name
-    :param cls: ``bool`` include class in name
-    :param mth: ``bool`` include method in name
-    :return: (string) including [module][.class][.method]
+    :param depth: (int) the depth of the caller if passing through multiple methods
+    :param mod: (bool) include module in name
+    :param cls: (bool) include class in name
+    :param mth: (bool) include method in name
+    :return: (str) including [module][.class][.method]
 
     """
     stack = inspect.stack()
@@ -120,42 +121,43 @@ class RepeatingTimer(threading.Thread):
     Thread can be automatically started on initialization, but timer must be started explicitly with ``start_timer()``.
     Uses ``logging`` which is set up based on the name of the calling module.
 
-    :param seconds: ``int`` interval for timer repeat
-    :param name: ``string`` used to identify the thread
-    :param auto_start: ``bool`` automatically start the thread on initialization
-    :param defer: ``bool`` wait until the first timer expiry before calling back
-    :param sleep_chunk: ``float`` tick cycle in seconds between state checks
-    :param callback: ``function`` the callback to execute each timer expiry
+    :param seconds: (int) interval for timer repeat
+    :param name: (str) used to identify the thread
+    :param sleep_chunk: (float) tick cycle in seconds between state checks
+    :param auto_start: (bool) automatically start the thread on initialization
+    :param defer: (bool) wait until the first timer expiry before calling back
+    :param tick_log: (bool) optional verbose debug logging of tick count (watch countdown)
+    :param callback: (function) the callback to execute each timer expiry
     :param args: **UNTESTED** optional arguments to pass into the callback
     :param kwargs: **UNTESTED** optional keyword arguments to pass into the callback
-    :param tick_log: ``bool`` optional verbose logging of tick count
 
     """
-    def __init__(self, seconds, name=None, sleep_chunk=0.25, auto_start=True, defer=True, tick_log=False,
-                 callback=None, *args, **kwargs):
+    def __init__(self, callback, seconds, name=None, sleep_chunk=0.25, auto_start=True, defer=True, tick_log=False,
+                 *args, **kwargs):
         """
         Initialization of the subclass.
 
-        :param seconds: ``int`` interval for timer repeat
-        :param name: ``string`` used to identify the thread
-        :param auto_start: ``bool`` automatically start the thread on initialization
-        :param defer: ``bool`` wait until the first timer expiry before calling back
-        :param sleep_chunk: ``float`` tick cycle in seconds between state checks
-        :param callback: ``function`` the callback to execute each timer expiry
+        :param callback: (function) the callback to execute each timer expiry
+        :param seconds: (int) interval for timer repeat
+        :param name: (str) used to identify the thread
+        :param sleep_chunk: (float) tick cycle in seconds between state checks
+        :param auto_start: (bool) automatically start the thread on initialization
+        :param defer: (bool) wait until the first timer expiry before calling back
+        :param tick_log: (bool) optional verbose debug logging of tick count (watch countdown)
         :param args: **UNTESTED** optional arguments to pass into the callback
         :param kwargs: **UNTESTED** optional keyword arguments to pass into the callback
-        :param tick_log: ``bool`` optional verbose logging of tick count
 
         """
         threading.Thread.__init__(self)
-        self.log = get_wrapping_logger(get_caller_name())
+        self.log = get_wrapping_logger(name=get_caller_name(), debug=tick_log)
         if name is not None:
             self.name = name
         else:
             self.name = str(callback) + "_timer_thread"
         self.interval = seconds
         if callback is None:
-            self.log.warning("No callback specified for RepeatingTimer " + self.name)
+            error = "No callback specified for RepeatingTimer {}".format(self.name)
+            raise ValueError("{}".format(error))
         self.callback = callback
         self.callback_args = args
         self.callback_kwargs = kwargs
@@ -175,8 +177,9 @@ class RepeatingTimer(threading.Thread):
             while self.count > 0 and self.start_event.is_set() and self.interval > 0:
                 if self.tick_log:
                     if (self.count * self.sleep_chunk - int(self.count * self.sleep_chunk)) == 0.0:
-                        self.log.debug("%s countdown: %d (%ds @ step %02f"
-                                       % (self.name, self.count, self.interval, self.sleep_chunk))
+                        self.log.debug("{name} countdown: {tick} ({interval}s @ step {step:.2f}s)"
+                                       .format(name=self.name, tick=self.count,
+                                               interval=self.interval, step=self.sleep_chunk))
                 if self.reset_event.wait(self.sleep_chunk):
                     self.reset_event.clear()
                     self.count = self.interval / self.sleep_chunk
@@ -186,32 +189,38 @@ class RepeatingTimer(threading.Thread):
                     self.count = self.interval / self.sleep_chunk
 
     def start_timer(self):
-        """Initially start the repeating timer."""
-        if not self.defer:
+        """Initially start the repeating timer, or continue from where stopped."""
+        self.log.info("{} timer started ({} seconds)".format(self.name, self.interval))
+        if not self.defer and self.interval > 0:
             self.callback(*self.callback_args, **self.callback_kwargs)
         self.start_event.set()
-        self.log.info("{} timer started ({} seconds)".format(self.name, self.interval))
 
     def stop_timer(self):
         """Stop the repeating timer."""
-        self.start_event.clear()
-        self.count = self.interval / self.sleep_chunk
         self.log.info("{} timer stopped ({} seconds)".format(self.name, self.interval))
+        self.start_event.clear()
+        # self.count = self.interval / self.sleep_chunk
 
     def restart_timer(self):
-        """Restart the repeating timer (after an interval change)."""
-        if not self.defer:
+        """Restart the repeating timer (e.g. after an interval change)."""
+        self.log.info("{} timer restarted ({} seconds)".format(self.name, self.interval))
+        self.count = self.interval / self.sleep_chunk
+        if not self.defer and self.interval > 0:
             self.callback(*self.callback_args, **self.callback_kwargs)
         if self.start_event.is_set():
             self.reset_event.set()
         else:
             self.start_event.set()
-        self.log.info("{} timer restarted ({} seconds)".format(self.name, self.interval))
 
     def change_interval(self, seconds):
-        """Change the timer interval and restart it."""
+        """
+        Change the timer interval and restart it.
+
+        :param seconds: (int) new timer value
+
+        """
         if isinstance(seconds, int) and seconds > 0:
-            self.log.info("{} timer interval changed ({} seconds)".format(self.name, self.interval))
+            self.log.info("{} timer interval changed (old:{} s new:{} s)".format(self.name, self.interval, seconds))
             self.interval = seconds
             self.restart_timer()
         else:
@@ -219,19 +228,28 @@ class RepeatingTimer(threading.Thread):
 
     def terminate(self):
         """Terminate the timer. (Cannot be restarted)"""
+        self.stop_timer()
         self.terminate_event.set()
         self.log.info(self.name + " timer terminated")
+
+
+def get_serial_ports():
+    ports_detailed = [tuple(port) for port in list(serial.tools.list_ports.comports())]
+    ports = []
+    for port in ports_detailed:
+        ports.append(port[0])
+    return ports
 
 
 def validate_serial_port(target):
     """
     Validates a given serial port as available on the host.
 
-    :param target: (string) the target port name e.g. '/dev/ttyUSB0'
+    :param target: (str) the target port name e.g. '/dev/ttyUSB0'
     :returns:
 
-       * (Boolean) validity result
-       * (String) descriptor
+       * (bool) validity result
+       * (str) descriptor
 
     """
     found = False
@@ -254,19 +272,24 @@ def validate_serial_port(target):
     return found, detail
 
 
+def get_net_interfaces():
+    import netifaces
+    return netifaces.interfaces()
+
+
 def get_ip_address(interface):
     """
 
     Gets the IP address of a particular interface, e.g. eth0 or wlan0 or ppp0
-    :param interface: (string) name of the interface e.g. eth0
-    :return: (string) IP(v4) address
+    :param interface: (str) name of the interface e.g. eth0
+    :return: (str) IPv4 address
 
     """
     try:
-        import netifaces as ni
-        ni.ifaddresses(interface)
-        ip = ni.ifaddresses(interface)[ni.AF_INET][0]['addr']
-    except ImportError:
+        import netifaces
+        netifaces.ifaddresses(interface)
+        ip = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]['addr']
+    except ImportError as err:
         import socket
         import fcntl
         import struct
