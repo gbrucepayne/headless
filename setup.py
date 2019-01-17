@@ -8,7 +8,7 @@ def readme():
 
 setup(name='headless',
       version='1.0.0',
-      description='A suite of functions and classes useful for headless operation',
+      description='A suite of functions and classes useful for headless operation on devices like Raspberry Pi',
       url='https://github.com/gbrucepayne/headless',
       author='G Bruce Payne',
       author_email='gbrucepayne@hotmail.com',
@@ -18,4 +18,5 @@ setup(name='headless',
             'pyserial',
             'netifaces',
       ],
+      include_package_data=True,
       zip_safe=False)

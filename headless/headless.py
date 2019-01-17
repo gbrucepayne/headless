@@ -96,7 +96,7 @@ def get_wrapping_logger(name=None, filename=None, file_size=5, debug=False):
     logger.setLevel(log_lvl)
 
     if filename is not None:
-        # TODO: validate that logfile is a valid path/filename
+        # TODO: check file/path validity
         file_handler = RotatingFileHandler(filename=filename, mode='a', maxBytes=file_size * 1024 * 1024,
                                            backupCount=2, encoding=None, delay=0)
         file_handler.name = name + '_file_handler'
@@ -173,7 +173,6 @@ class RepeatingTimer(threading.Thread):
                     self.count = self.interval / self.sleep_chunk
 
     def _callback(self):
-        # TODO: add positional args handling
         self.callback(**self.callback_kwargs)
 
     def start_timer(self):
@@ -270,11 +269,11 @@ def get_net_interfaces():
 
 def get_ip_address(interface):
     """
-    Gets the IP address of a particular interface, e.g. eth0 or wlan0 or ppp0
+    Returns the IP and MAC address of a particular interface, e.g. eth0 or wlan0 or ppp0
 
     :param str interface: name of the interface e.g. eth0
-    :return: IPv4 address
-    :rtype: str
+    :return: IPv4 address, MAC address
+    :rtype: str, str
     """
     try:
         import netifaces
@@ -283,10 +282,15 @@ def get_ip_address(interface):
             ip = detail[netifaces.AF_INET][0]['addr']
         else:
             ip = 'unavailable'
+        if netifaces.AF_LINK in detail:
+            mac = detail[netifaces.AF_LINK][0]['addr']
+        else:
+            mac = 'unknown'
     except ImportError:
         import socket
         import fcntl
         import struct
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         ip = socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack('256s', interface[:15]))[20:24])
-    return ip
+        mac = fcntl.ioctl(s.fileno(), 0x8927,  struct.pack('256s', interface[:15]))
+    return ip, mac

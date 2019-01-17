@@ -21,15 +21,18 @@ class HeadlessTestCase(unittest.TestCase):
 
     def test_get_wrapping_logger(self):
         print("Testing get_wrapping_logger")
-        log = headless.get_wrapping_logger()
+        name = 'test'
+        filename = name + '.log'
+        log = headless.get_wrapping_logger(name=name, filename=filename)
         self.assertTrue(headless.is_logger(log))
 
     def test_RepeatingTimer_auto_start(self):
         CALLBACK_COUNT = 3
         TIMER_INTERVAL = 3
         print("Testing RepeatingTimer auto_start")
+        kwargs = {'arg3': 3, 'arg4': 4}
         timer_thread = RepeatingTimer(seconds=TIMER_INTERVAL, callback=self.cb_repeating_simple, name='test',
-                                      defer=False, tick_log=True, **{'key1': 1, 'key2': 2})
+                                      defer=False, tick_log=True, **kwargs)
         timer_thread.start_timer()
         while self.timer_callback_count < CALLBACK_COUNT:
             pass
@@ -38,7 +41,8 @@ class HeadlessTestCase(unittest.TestCase):
 
     def cb_repeating_simple(self, **kwargs):
         self.timer_callback_count += 1
-        print("Callback called {} times.  This time with kwargs:{}".format(self.timer_callback_count, kwargs))
+        print("Callback called {} times: this time with args: {}"
+              .format(self.timer_callback_count, kwargs))
 
     def test_RepeatingTimer_change_interval(self):
         CALLBACK_COUNT = 2
