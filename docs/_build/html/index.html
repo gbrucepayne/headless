@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Welcome to headless’s documentation! &#8212; headless  documentation</title>
+    <title>Welcome to headless’ documentation! &#8212; headless  documentation</title>
     <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -27,6 +27,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">headless  documentation</a> &#187;</li> 
       </ul>
     </div>
@@ -34,8 +37,10 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to headless’s documentation!</a></li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+<li><a class="reference internal" href="#">Welcome to headless’ documentation!</a><ul>
+<li><a class="reference internal" href="#module-headless">headless</a></li>
+</ul>
+</li>
 </ul>
 
   <div role="note" aria-label="source link">
@@ -65,18 +70,227 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-headless-s-documentation">
-<h1>Welcome to headless’s documentation!<a class="headerlink" href="#welcome-to-headless-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="welcome-to-headless-documentation">
+<h1>Welcome to headless’ documentation!<a class="headerlink" href="#welcome-to-headless-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
-<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
-<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+<div class="section" id="module-headless">
+<span id="headless"></span><h2>headless<a class="headerlink" href="#module-headless" title="Permalink to this headline">¶</a></h2>
+<p>Functions and classes useful for operating a headless device e.g. Raspberry Pi or Intelligent Edge Gateway</p>
+<dl class="function">
+<dt id="headless.is_logger">
+<code class="descclassname">headless.</code><code class="descname">is_logger</code><span class="sig-paren">(</span><em>log</em><span class="sig-paren">)</span><a class="headerlink" href="#headless.is_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the object is a Logger</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="headless.is_log_handler">
+<code class="descclassname">headless.</code><code class="descname">is_log_handler</code><span class="sig-paren">(</span><em>logger</em>, <em>handler</em><span class="sig-paren">)</span><a class="headerlink" href="#headless.is_log_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines if a given (named) Handler is assigned to a Logger.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>logger</strong> (<a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger" title="(in Python v3.7)"><em>logging.Logger</em></a>) – a logger object</li>
+<li><strong>handler</strong> (<a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Handler" title="(in Python v3.7)"><em>logging.Handler</em></a>) – a handler object</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">result</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="headless.get_caller_name">
+<code class="descclassname">headless.</code><code class="descname">get_caller_name</code><span class="sig-paren">(</span><em>depth=2</em>, <em>mod=True</em>, <em>cls=False</em>, <em>mth=False</em><span class="sig-paren">)</span><a class="headerlink" href="#headless.get_caller_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the name of the calling module/class/method with format [module][.class][.method]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – the depth of the caller if passing through multiple methods (optional)</li>
+<li><strong>mod</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – include module in name (optional)</li>
+<li><strong>cls</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – include class in name (optional)</li>
+<li><strong>mth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – include method in name (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">caller name as [module][.class][.method]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="headless.get_wrapping_logger">
+<code class="descclassname">headless.</code><code class="descname">get_wrapping_logger</code><span class="sig-paren">(</span><em>name=None</em>, <em>filename=None</em>, <em>file_size=5</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="headerlink" href="#headless.get_wrapping_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes logging to console, and optionally a wrapping CSV formatted file of defined size.
+Default logging level is INFO.
+Timestamps are GMT/UTC/Zulu.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – name of the logger (optional, if None will use name of calling module)</li>
+<li><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – the name of the file if writing to a file (optional, no file created if not specified)</li>
+<li><strong>file_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – the max size of the file in megabytes, before wrapping occurs (optional)</li>
+<li><strong>debug</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – enable DEBUG logging (default INFO)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a configured Logger</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger" title="(in Python v3.7)">logging.Logger</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="headless.RepeatingTimer">
+<em class="property">class </em><code class="descclassname">headless.</code><code class="descname">RepeatingTimer</code><span class="sig-paren">(</span><em>callback</em>, <em>seconds</em>, <em>name=None</em>, <em>sleep_chunk=0.25</em>, <em>auto_start=True</em>, <em>defer=True</em>, <em>tick_log=False</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#headless.RepeatingTimer" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Thread class that repeats function calls like a Timer but can be stopped, restarted and change interval.
+Thread can be automatically started on initialization, but timer must be started explicitly with <code class="docutils literal notranslate"><span class="pre">start_timer()</span></code>.
+Uses <code class="docutils literal notranslate"><span class="pre">logging</span></code> which is set up based on the name of the calling module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>function</em>) – the callback to execute each timer expiry</li>
+<li><strong>seconds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – interval for timer repeat</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – used to identify the thread</li>
+<li><strong>sleep_chunk</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – tick cycle in seconds between state checks</li>
+<li><strong>auto_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – automatically start the thread on initialization</li>
+<li><strong>defer</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – wait until the first timer expiry before calling back</li>
+<li><strong>tick_log</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – optional verbose debug logging of tick count (watch countdown)</li>
+<li><strong>args</strong> – <strong>UNTESTED</strong> optional arguments to pass into the callback</li>
+<li><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – optional keyword/value arguments to pass into the callback</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="headless.RepeatingTimer.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#headless.RepeatingTimer.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts down the interval, checking every <code class="docutils literal notranslate"><span class="pre">sleep_chunk</span></code> the desired state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="headless.RepeatingTimer.start_timer">
+<code class="descname">start_timer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#headless.RepeatingTimer.start_timer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initially start the repeating timer, or continue from where stopped.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="headless.RepeatingTimer.stop_timer">
+<code class="descname">stop_timer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#headless.RepeatingTimer.stop_timer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop the repeating timer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="headless.RepeatingTimer.restart_timer">
+<code class="descname">restart_timer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#headless.RepeatingTimer.restart_timer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restart the repeating timer (e.g. after an interval change).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="headless.RepeatingTimer.change_interval">
+<code class="descname">change_interval</code><span class="sig-paren">(</span><em>seconds</em><span class="sig-paren">)</span><a class="headerlink" href="#headless.RepeatingTimer.change_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the timer interval and restart it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seconds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – new timer value</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="headless.RepeatingTimer.terminate">
+<code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#headless.RepeatingTimer.terminate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Terminate the timer. (Cannot be restarted)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="headless.get_serial_ports">
+<code class="descclassname">headless.</code><code class="descname">get_serial_ports</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#headless.get_serial_ports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of serial ports found on the system.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="headless.validate_serial_port">
+<code class="descclassname">headless.</code><code class="descname">validate_serial_port</code><span class="sig-paren">(</span><em>target</em><span class="sig-paren">)</span><a class="headerlink" href="#headless.validate_serial_port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates a given serial port as available on the host.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>target</strong> – (str) the target port name e.g. ‘/dev/ttyUSB0’</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">result, details</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="headless.get_net_interfaces">
+<code class="descclassname">headless.</code><code class="descname">get_net_interfaces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#headless.get_net_interfaces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of available network interfaces found on the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of interfaces</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="headless.get_ip_address">
+<code class="descclassname">headless.</code><code class="descname">get_ip_address</code><span class="sig-paren">(</span><em>interface</em><span class="sig-paren">)</span><a class="headerlink" href="#headless.get_ip_address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the IP address of a particular interface, e.g. eth0 or wlan0 or ppp0</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>interface</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – name of the interface e.g. eth0</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">IPv4 address</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -91,6 +305,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">headless  documentation</a> &#187;</li> 
       </ul>
     </div>

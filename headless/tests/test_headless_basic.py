@@ -28,17 +28,17 @@ class HeadlessTestCase(unittest.TestCase):
         CALLBACK_COUNT = 3
         TIMER_INTERVAL = 3
         print("Testing RepeatingTimer auto_start")
-        timer_thread = RepeatingTimer(callback=self.cb_repeating_simple, seconds=TIMER_INTERVAL, name='test',
-                                      defer=False, tick_log=True)
+        timer_thread = RepeatingTimer(seconds=TIMER_INTERVAL, callback=self.cb_repeating_simple, name='test',
+                                      defer=False, tick_log=True, **{'key1': 1, 'key2': 2})
         timer_thread.start_timer()
         while self.timer_callback_count < CALLBACK_COUNT:
             pass
         self.assertTrue(self.timer_callback_count == CALLBACK_COUNT)
         timer_thread.terminate()
 
-    def cb_repeating_simple(self):
+    def cb_repeating_simple(self, **kwargs):
         self.timer_callback_count += 1
-        print("Callback called {} times".format(self.timer_callback_count))
+        print("Callback called {} times.  This time with kwargs:{}".format(self.timer_callback_count, kwargs))
 
     def test_RepeatingTimer_change_interval(self):
         CALLBACK_COUNT = 2

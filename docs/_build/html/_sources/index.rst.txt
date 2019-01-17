@@ -1,9 +1,9 @@
 .. headless documentation master file, created by
-   sphinx-quickstart on Wed Jan 16 16:36:59 2019.
+   sphinx-quickstart on Wed Jan 16 17:20:26 2019.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to headless's documentation!
+Welcome to headless' documentation!
 ====================================
 
 .. toctree::
@@ -11,10 +11,8 @@ Welcome to headless's documentation!
    :caption: Contents:
 
 
+headless
+--------
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. automodule:: headless
+   :members:

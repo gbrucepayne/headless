@@ -19,12 +19,12 @@ def is_logger(log):
 
 def is_log_handler(logger, handler):
     """
-    Determines if a given (named) Handler is assigned to a Logger
+    Determines if a given (named) Handler is assigned to a Logger.
 
-    :param logger: (logging.Logger) object
-    :param handler: (logging.Handler) object
-    :return: (bool) result
-
+    :param logging.Logger logger: a logger object
+    :param logging.Handler handler: a handler object
+    :returns: result
+    :rtype: bool
     """
     found = False
     if handler.name is None:
@@ -38,15 +38,14 @@ def is_log_handler(logger, handler):
 
 def get_caller_name(depth=2, mod=True, cls=False, mth=False):
     """
-
     Gets the name of the calling module/class/method with format [module][.class][.method]
 
-    :param depth: (int) the depth of the caller if passing through multiple methods
-    :param mod: (bool) include module in name
-    :param cls: (bool) include class in name
-    :param mth: (bool) include method in name
-    :return: (str) including [module][.class][.method]
-
+    :param int depth: the depth of the caller if passing through multiple methods (optional)
+    :param bool mod: include module in name (optional)
+    :param bool cls: include class in name (optional)
+    :param bool mth: include method in name (optional)
+    :return: caller name as [module][.class][.method]
+    :rtype: str
     """
     stack = inspect.stack()
     start = 0 + depth
@@ -73,12 +72,12 @@ def get_wrapping_logger(name=None, filename=None, file_size=5, debug=False):
     Default logging level is INFO.
     Timestamps are GMT/UTC/Zulu.
 
-    :param name: name of the logger (if None, will use name of calling module)
-    :param filename: the name of the file if writing to a file
-    :param file_size: the max size of the file in megabytes, before wrapping occurs
-    :param debug: Boolean to enable tick_log DEBUG logging (default INFO)
-    :return: ``log`` object
-
+    :param str name: name of the logger (optional, if None will use name of calling module)
+    :param str filename: the name of the file if writing to a file (optional, no file created if not specified)
+    :param int file_size: the max size of the file in megabytes, before wrapping occurs (optional)
+    :param bool debug: enable DEBUG logging (default INFO)
+    :return: a configured Logger
+    :rtype: logging.Logger
     """
     FORMAT = ('%(asctime)s.%(msecs)03dZ,[%(levelname)s],(%(threadName)-10s),'
               '%(module)s.%(funcName)s:%(lineno)d,%(message)s')
@@ -120,33 +119,19 @@ class RepeatingTimer(threading.Thread):
     A Thread class that repeats function calls like a Timer but can be stopped, restarted and change interval.
     Thread can be automatically started on initialization, but timer must be started explicitly with ``start_timer()``.
     Uses ``logging`` which is set up based on the name of the calling module.
-
-    :param seconds: (int) interval for timer repeat
-    :param name: (str) used to identify the thread
-    :param sleep_chunk: (float) tick cycle in seconds between state checks
-    :param auto_start: (bool) automatically start the thread on initialization
-    :param defer: (bool) wait until the first timer expiry before calling back
-    :param tick_log: (bool) optional verbose debug logging of tick count (watch countdown)
-    :param callback: (function) the callback to execute each timer expiry
-    :param args: **UNTESTED** optional arguments to pass into the callback
-    :param kwargs: **UNTESTED** optional keyword arguments to pass into the callback
-
     """
-    def __init__(self, callback, seconds, name=None, sleep_chunk=0.25, auto_start=True, defer=True, tick_log=False,
-                 *args, **kwargs):
+
+    def __init__(self, seconds, callback, name=None, sleep_chunk=0.25, auto_start=True, defer=True, tick_log=False,
+                 **kwargs):
         """
-        Initialization of the subclass.
-
-        :param callback: (function) the callback to execute each timer expiry
-        :param seconds: (int) interval for timer repeat
-        :param name: (str) used to identify the thread
-        :param sleep_chunk: (float) tick cycle in seconds between state checks
-        :param auto_start: (bool) automatically start the thread on initialization
-        :param defer: (bool) wait until the first timer expiry before calling back
-        :param tick_log: (bool) optional verbose debug logging of tick count (watch countdown)
-        :param args: **UNTESTED** optional arguments to pass into the callback
-        :param kwargs: **UNTESTED** optional keyword arguments to pass into the callback
-
+        :param function callback: the callback to execute each timer expiry
+        :param int seconds: interval for timer repeat
+        :param str name: used to identify the thread
+        :param float sleep_chunk: tick cycle in seconds between state checks
+        :param bool auto_start: automatically start the thread on initialization
+        :param bool defer: wait until the first timer expiry before calling back
+        :param bool tick_log: optional verbose debug logging of tick count (watch countdown)
+        :param dict kwargs: optional keyword/value arguments to pass into the callback
         """
         threading.Thread.__init__(self)
         self.log = get_wrapping_logger(name=get_caller_name(), debug=tick_log)
@@ -159,7 +144,6 @@ class RepeatingTimer(threading.Thread):
             error = "No callback specified for RepeatingTimer {}".format(self.name)
             raise ValueError("{}".format(error))
         self.callback = callback
-        self.callback_args = args
         self.callback_kwargs = kwargs
         self.sleep_chunk = sleep_chunk
         self.defer = defer
@@ -185,14 +169,18 @@ class RepeatingTimer(threading.Thread):
                     self.count = self.interval / self.sleep_chunk
                 self.count -= 1
                 if self.count <= 0:
-                    self.callback(*self.callback_args, **self.callback_kwargs)
+                    self._callback()
                     self.count = self.interval / self.sleep_chunk
+
+    def _callback(self):
+        # TODO: add positional args handling
+        self.callback(**self.callback_kwargs)
 
     def start_timer(self):
         """Initially start the repeating timer, or continue from where stopped."""
         self.log.info("{} timer started ({} seconds)".format(self.name, self.interval))
         if not self.defer and self.interval > 0:
-            self.callback(*self.callback_args, **self.callback_kwargs)
+            self._callback()
         self.start_event.set()
 
     def stop_timer(self):
@@ -206,7 +194,7 @@ class RepeatingTimer(threading.Thread):
         self.log.info("{} timer restarted ({} seconds)".format(self.name, self.interval))
         self.count = self.interval / self.sleep_chunk
         if not self.defer and self.interval > 0:
-            self.callback(*self.callback_args, **self.callback_kwargs)
+            self._callback()
         if self.start_event.is_set():
             self.reset_event.set()
         else:
@@ -216,8 +204,7 @@ class RepeatingTimer(threading.Thread):
         """
         Change the timer interval and restart it.
 
-        :param seconds: (int) new timer value
-
+        :param int seconds: new timer value
         """
         if isinstance(seconds, int) and seconds > 0:
             self.log.info("{} timer interval changed (old:{} s new:{} s)".format(self.name, self.interval, seconds))
@@ -234,6 +221,7 @@ class RepeatingTimer(threading.Thread):
 
 
 def get_serial_ports():
+    """Returns a list of serial ports found on the system."""
     ports_detailed = [tuple(port) for port in list(serial.tools.list_ports.comports())]
     ports = []
     for port in ports_detailed:
@@ -246,11 +234,8 @@ def validate_serial_port(target):
     Validates a given serial port as available on the host.
 
     :param target: (str) the target port name e.g. '/dev/ttyUSB0'
-    :returns:
-
-       * (bool) validity result
-       * (str) descriptor
-
+    :returns: result, details
+    :rtype: bool, str
     """
     found = False
     detail = ""
@@ -273,23 +258,32 @@ def validate_serial_port(target):
 
 
 def get_net_interfaces():
+    """
+    Returns a list of available network interfaces found on the system.
+
+    :returns: list of interfaces
+    :rtype: list
+    """
     import netifaces
     return netifaces.interfaces()
 
 
 def get_ip_address(interface):
     """
-
     Gets the IP address of a particular interface, e.g. eth0 or wlan0 or ppp0
-    :param interface: (str) name of the interface e.g. eth0
-    :return: (str) IPv4 address
 
+    :param str interface: name of the interface e.g. eth0
+    :return: IPv4 address
+    :rtype: str
     """
     try:
         import netifaces
-        netifaces.ifaddresses(interface)
-        ip = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]['addr']
-    except ImportError as err:
+        detail = netifaces.ifaddresses(interface)
+        if netifaces.AF_INET in detail:
+            ip = detail[netifaces.AF_INET][0]['addr']
+        else:
+            ip = 'unavailable'
+    except ImportError:
         import socket
         import fcntl
         import struct
